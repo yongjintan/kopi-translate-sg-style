@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -8,10 +8,11 @@ import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
-import { Coffee, Plus, Trash2 } from "lucide-react"
+import { Coffee, Plus, Trash2, History, Download, Calendar } from "lucide-react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card"
 import { Eye } from "lucide-react"
+import Image from "next/image"
 
 interface Order {
   id: string
@@ -23,42 +24,65 @@ interface Order {
 
 const KopiVisual = ({ kopiSlang, size = "w-32 h-32" }: { kopiSlang: string; size?: string }) => {
   const visual = getKopiVisual(kopiSlang)
+  const sizeClasses = size.split(" ")
+  const width = sizeClasses[0].replace("w-", "").replace("[", "").replace("]", "")
+  const height = sizeClasses[1].replace("h-", "").replace("[", "").replace("]", "")
+
+  // Convert Tailwind classes to pixel values (assuming 1 unit = 4px)
+  const getPixelSize = (tailwindSize: string) => {
+    const numericSize = Number.parseInt(tailwindSize)
+    return numericSize * 16 // 16px per unit for better image quality
+  }
+
+  const pixelWidth = getPixelSize(width)
+  const pixelHeight = getPixelSize(height)
 
   return (
-    <div
-      className={`${size} ${visual.color} rounded-lg flex items-center justify-center shadow-lg border-2 border-white/20`}
-    >
-      <div className="text-center">
-        <div className={`font-bold ${visual.textColor} text-xs leading-tight`}>{visual.label}</div>
-        {kopiSlang.includes("Peng") && <div className="text-blue-200 text-xs mt-1">❄️</div>}
-        {!kopiSlang.includes("Peng") && <div className="text-orange-200 text-xs mt-1">☕</div>}
+    <div className={`${size} relative rounded-lg overflow-hidden shadow-lg border-2 border-white/20`}>
+      <Image
+        src={visual.imageSrc || "/placeholder.svg"}
+        alt={visual.alt}
+        width={pixelWidth}
+        height={pixelHeight}
+        className="object-cover w-full h-full"
+        crossOrigin="anonymous"
+        priority={size.includes("48")} // Priority for larger images
+        onError={(e) => {
+          console.error("Image failed to load:", visual.imageSrc)
+          // Fallback to placeholder if image fails
+          e.currentTarget.src = "/placeholder.svg?height=400&width=400"
+        }}
+      />
+      <div className="absolute inset-0 bg-black/20 flex items-center justify-center">
+        <div className="text-center">
+          <div className="font-bold text-white text-xs leading-tight drop-shadow-lg">{visual.label}</div>
+          {kopiSlang.includes("Peng") && <div className="text-blue-200 text-xs mt-1 drop-shadow-lg">❄️</div>}
+          {!kopiSlang.includes("Peng") && <div className="text-orange-200 text-xs mt-1 drop-shadow-lg">☕</div>}
+        </div>
       </div>
     </div>
   )
 }
 
-const getKopiVisual = (kopiSlang: string): { color: string; textColor: string; label: string; alt: string } => {
+const getKopiVisual = (kopiSlang: string): { imageSrc: string; label: string; alt: string } => {
   const slang = kopiSlang.toLowerCase()
 
   if (slang.includes("milo")) {
     return {
-      color: "bg-amber-800",
-      textColor: "text-white",
+      imageSrc: "/images/milo.png",
       label: "MILO",
       alt: "Milo drink",
     }
   } else if (slang.includes("teh")) {
     if (slang.includes("peng")) {
       return {
-        color: "bg-orange-600",
-        textColor: "text-white",
+        imageSrc: "/images/teh-peng.png",
         label: "ICED TEH",
         alt: "Iced tea",
       }
     }
     return {
-      color: "bg-orange-500",
-      textColor: "text-white",
+      imageSrc: "/images/teh.png",
       label: "HOT TEH",
       alt: "Hot tea",
     }
@@ -66,29 +90,25 @@ const getKopiVisual = (kopiSlang: string): { color: string; textColor: string; l
     // Coffee variants
     if (slang.includes("peng")) {
       return {
-        color: "bg-amber-700",
-        textColor: "text-white",
+        imageSrc: "/images/kopi-peng.png",
         label: "ICED KOPI",
         alt: "Iced coffee",
       }
     } else if (slang.includes("-o")) {
       return {
-        color: "bg-stone-800",
-        textColor: "text-white",
+        imageSrc: "/images/kopi-o.png",
         label: "KOPI-O",
         alt: "Black coffee",
       }
     } else if (slang.includes("-c")) {
       return {
-        color: "bg-amber-600",
-        textColor: "text-white",
+        imageSrc: "/images/kopi-c.png",
         label: "KOPI-C",
         alt: "Coffee with evaporated milk",
       }
     }
     return {
-      color: "bg-amber-700",
-      textColor: "text-white",
+      imageSrc: "/images/kopi.png",
       label: "KOPI",
       alt: "Coffee with condensed milk",
     }
@@ -97,6 +117,30 @@ const getKopiVisual = (kopiSlang: string): { color: string; textColor: string; l
 
 export default function KopiTranslateApp() {
   const [orders, setOrders] = useState<Order[]>([])
+
+  // Load orders from localStorage on component mount
+  useEffect(() => {
+    const savedOrders = localStorage.getItem("kopi-orders")
+    if (savedOrders) {
+      try {
+        const parsedOrders = JSON.parse(savedOrders).map((order: any) => ({
+          ...order,
+          timestamp: new Date(order.timestamp),
+        }))
+        setOrders(parsedOrders)
+      } catch (error) {
+        console.error("Error loading saved orders:", error)
+      }
+    }
+  }, [])
+
+  // Save orders to localStorage whenever orders change
+  useEffect(() => {
+    if (orders.length > 0) {
+      localStorage.setItem("kopi-orders", JSON.stringify(orders))
+    }
+  }, [orders])
+
   const [name, setName] = useState("")
   const [drinkType, setDrinkType] = useState("")
   const [milkType, setMilkType] = useState("")
@@ -168,6 +212,37 @@ export default function KopiTranslateApp() {
 
   const removeOrder = (id: string) => {
     setOrders(orders.filter((order) => order.id !== id))
+  }
+
+  const clearAllOrders = () => {
+    if (confirm("Are you sure you want to clear all order history? This cannot be undone.")) {
+      setOrders([])
+      localStorage.removeItem("kopi-orders")
+    }
+  }
+
+  const exportOrders = () => {
+    const dataStr = JSON.stringify(orders, null, 2)
+    const dataBlob = new Blob([dataStr], { type: "application/json" })
+    const url = URL.createObjectURL(dataBlob)
+    const link = document.createElement("a")
+    link.href = url
+    link.download = `kopi-orders-${new Date().toISOString().split("T")[0]}.json`
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+    URL.revokeObjectURL(url)
+  }
+
+  const getTotalOrdersToday = () => {
+    const today = new Date().toDateString()
+    return orders.filter((order) => order.timestamp.toDateString() === today).length
+  }
+
+  const getTotalOrdersThisWeek = () => {
+    const oneWeekAgo = new Date()
+    oneWeekAgo.setDate(oneWeekAgo.getDate() - 7)
+    return orders.filter((order) => order.timestamp >= oneWeekAgo).length
   }
 
   return (
@@ -324,17 +399,83 @@ export default function KopiTranslateApp() {
           </Card>
         </div>
 
+        {/* Order Statistics */}
+        {orders.length > 0 && (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <Card>
+              <CardContent className="p-4">
+                <div className="flex items-center gap-2">
+                  <Calendar className="h-5 w-5 text-blue-600" />
+                  <div>
+                    <p className="text-sm text-muted-foreground">Today</p>
+                    <p className="text-2xl font-bold">{getTotalOrdersToday()}</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="p-4">
+                <div className="flex items-center gap-2">
+                  <History className="h-5 w-5 text-green-600" />
+                  <div>
+                    <p className="text-sm text-muted-foreground">This Week</p>
+                    <p className="text-2xl font-bold">{getTotalOrdersThisWeek()}</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="p-4">
+                <div className="flex items-center gap-2">
+                  <Coffee className="h-5 w-5 text-amber-600" />
+                  <div>
+                    <p className="text-sm text-muted-foreground">Total Orders</p>
+                    <p className="text-2xl font-bold">{orders.length}</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        )}
+
         {/* Orders List */}
         <Card className="shadow-lg">
           <CardHeader>
-            <CardTitle>Order List ({orders.length} orders)</CardTitle>
-            <CardDescription>All orders with Singapore kopi slang translations</CardDescription>
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle>Order History ({orders.length} orders)</CardTitle>
+                <CardDescription>All your kopi orders with Singapore slang translations</CardDescription>
+              </div>
+              {orders.length > 0 && (
+                <div className="flex gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={exportOrders}
+                    className="flex items-center gap-2 bg-transparent"
+                  >
+                    <Download className="h-4 w-4" />
+                    Export
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={clearAllOrders}
+                    className="flex items-center gap-2 text-red-600 hover:text-red-700 bg-transparent"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                    Clear All
+                  </Button>
+                </div>
+              )}
+            </div>
           </CardHeader>
           <CardContent>
             {orders.length === 0 ? (
               <div className="text-center py-8 text-muted-foreground">
                 <Coffee className="h-12 w-12 mx-auto mb-4 opacity-50" />
                 <p>No orders yet. Place your first order above!</p>
+                <p className="text-sm mt-2">Your order history will be saved automatically</p>
               </div>
             ) : (
               <div className="overflow-x-auto">
@@ -344,76 +485,121 @@ export default function KopiTranslateApp() {
                       <TableHead>Customer Name</TableHead>
                       <TableHead>Original Order</TableHead>
                       <TableHead>Kopi Slang</TableHead>
-                      <TableHead>Time</TableHead>
+                      <TableHead>Date & Time</TableHead>
                       <TableHead className="w-[50px]">Action</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {orders.map((order) => (
-                      <TableRow key={order.id}>
-                        <TableCell className="font-medium">{order.name}</TableCell>
-                        <TableCell className="text-sm text-muted-foreground">{order.drink}</TableCell>
-                        <TableCell>
-                          <div className="flex items-center gap-2">
-                            <HoverCard>
-                              <HoverCardTrigger asChild>
-                                <Badge
-                                  variant="secondary"
-                                  className="bg-amber-100 text-amber-800 font-medium cursor-pointer hover:bg-amber-200 transition-colors"
-                                >
-                                  {order.kopiSlang}
-                                </Badge>
-                              </HoverCardTrigger>
-                              <HoverCardContent className="w-64">
-                                <div className="flex flex-col items-center space-y-2">
-                                  <KopiVisual kopiSlang={order.kopiSlang} size="w-32 h-32" />
-                                  <div className="text-center">
-                                    <p className="font-medium">{order.kopiSlang}</p>
-                                    <p className="text-sm text-muted-foreground">
-                                      {getKopiVisual(order.kopiSlang).alt}
-                                    </p>
+                    {orders
+                      .sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime())
+                      .map((order) => (
+                        <TableRow key={order.id}>
+                          <TableCell className="font-medium">{order.name}</TableCell>
+                          <TableCell className="text-sm text-muted-foreground">{order.drink}</TableCell>
+                          <TableCell>
+                            <div className="flex items-center gap-2">
+                              <HoverCard>
+                                <HoverCardTrigger asChild>
+                                  <Badge
+                                    variant="secondary"
+                                    className="bg-amber-100 text-amber-800 font-medium cursor-pointer hover:bg-amber-200 transition-colors"
+                                  >
+                                    {order.kopiSlang}
+                                  </Badge>
+                                </HoverCardTrigger>
+                                <HoverCardContent className="w-64">
+                                  <div className="flex flex-col items-center space-y-2">
+                                    <KopiVisual kopiSlang={order.kopiSlang} size="w-32 h-32" />
+                                    <div className="text-center">
+                                      <p className="font-medium">{order.kopiSlang}</p>
+                                      <p className="text-sm text-muted-foreground">
+                                        {getKopiVisual(order.kopiSlang).alt}
+                                      </p>
+                                    </div>
                                   </div>
-                                </div>
-                              </HoverCardContent>
-                            </HoverCard>
+                                </HoverCardContent>
+                              </HoverCard>
 
-                            <Dialog>
-                              <DialogTrigger asChild>
-                                <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
-                                  <Eye className="h-3 w-3" />
-                                </Button>
-                              </DialogTrigger>
-                              <DialogContent className="sm:max-w-md">
-                                <DialogHeader>
-                                  <DialogTitle>{order.kopiSlang}</DialogTitle>
-                                </DialogHeader>
-                                <div className="flex flex-col items-center space-y-4">
-                                  <KopiVisual kopiSlang={order.kopiSlang} size="w-48 h-48" />
-                                  <div className="text-center space-y-2">
-                                    <p className="font-medium text-lg">{order.kopiSlang}</p>
-                                    <p className="text-muted-foreground">{getKopiVisual(order.kopiSlang).alt}</p>
-                                    <p className="text-sm text-muted-foreground">Ordered by: {order.name}</p>
+                              <Dialog>
+                                <DialogTrigger asChild>
+                                  <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    className="h-6 w-6 p-0 hover:bg-gray-100"
+                                    onClick={(e) => {
+                                      e.stopPropagation()
+                                      console.log("Eye button clicked for:", order.kopiSlang)
+                                    }}
+                                  >
+                                    <Eye className="h-3 w-3" />
+                                  </Button>
+                                </DialogTrigger>
+                                <DialogContent className="sm:max-w-md">
+                                  <DialogHeader>
+                                    <DialogTitle className="text-center">{order.kopiSlang}</DialogTitle>
+                                  </DialogHeader>
+                                  <div className="flex flex-col items-center space-y-4 p-4">
+                                    <div className="w-48 h-48 relative rounded-lg overflow-hidden shadow-lg border-2 border-gray-200">
+                                      <Image
+                                        src={getKopiVisual(order.kopiSlang).imageSrc || "/placeholder.svg"}
+                                        alt={getKopiVisual(order.kopiSlang).alt}
+                                        width={192}
+                                        height={192}
+                                        className="object-cover w-full h-full"
+                                        onLoad={() => console.log("Image loaded successfully")}
+                                        onError={(e) => {
+                                          console.error(
+                                            "Image failed to load:",
+                                            getKopiVisual(order.kopiSlang).imageSrc,
+                                          )
+                                          e.currentTarget.src = "/placeholder.svg?height=400&width=400"
+                                        }}
+                                      />
+                                      <div className="absolute inset-0 bg-black/20 flex items-center justify-center">
+                                        <div className="text-center">
+                                          <div className="font-bold text-white text-sm leading-tight drop-shadow-lg">
+                                            {getKopiVisual(order.kopiSlang).label}
+                                          </div>
+                                          {order.kopiSlang.includes("Peng") && (
+                                            <div className="text-blue-200 text-sm mt-1 drop-shadow-lg">❄️</div>
+                                          )}
+                                          {!order.kopiSlang.includes("Peng") && (
+                                            <div className="text-orange-200 text-sm mt-1 drop-shadow-lg">☕</div>
+                                          )}
+                                        </div>
+                                      </div>
+                                    </div>
+                                    <div className="text-center space-y-2">
+                                      <p className="font-medium text-lg">{order.kopiSlang}</p>
+                                      <p className="text-muted-foreground">{getKopiVisual(order.kopiSlang).alt}</p>
+                                      <p className="text-sm text-muted-foreground">Ordered by: {order.name}</p>
+                                      <p className="text-xs text-muted-foreground">
+                                        {order.timestamp.toLocaleDateString()} at {order.timestamp.toLocaleTimeString()}
+                                      </p>
+                                    </div>
                                   </div>
-                                </div>
-                              </DialogContent>
-                            </Dialog>
-                          </div>
-                        </TableCell>
-                        <TableCell className="text-sm text-muted-foreground">
-                          {order.timestamp.toLocaleTimeString()}
-                        </TableCell>
-                        <TableCell>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => removeOrder(order.id)}
-                            className="text-red-600 hover:text-red-700 hover:bg-red-50"
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </TableCell>
-                      </TableRow>
-                    ))}
+                                </DialogContent>
+                              </Dialog>
+                            </div>
+                          </TableCell>
+                          <TableCell className="text-sm text-muted-foreground">
+                            <div>
+                              <div>{order.timestamp.toLocaleDateString()}</div>
+                              <div className="text-xs opacity-70">{order.timestamp.toLocaleTimeString()}</div>
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => removeOrder(order.id)}
+                              className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      ))}
                   </TableBody>
                 </Table>
               </div>
