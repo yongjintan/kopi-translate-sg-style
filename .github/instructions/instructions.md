@@ -2,15 +2,16 @@
 
 ## 📋 Overview
 
-This document provides comprehensive instructions for developing and maintaining the Kopi Translate SG Style application. This is a Singapore-focused translation tool that preserves local context, Singlish expressions, and cultural nuances.
+This document provides comprehensive instructions for developing and maintaining the Kopi Translate SG Style application. This is a Singapore coffee ordering system that teaches authentic kopi slang and helps users learn kopitiam culture.
 
 ## 🎯 Project Goals
 
-- Create accurate translations that preserve Singapore context
-- Handle Singlish expressions appropriately
-- Maintain cultural sensitivity in translations
-- Provide a mobile-first, user-friendly interface
-- Support multilingual Singapore community
+- Create an educational tool for learning authentic Singapore kopi terminology
+- Help users build coffee orders through intuitive dropdown selections
+- Generate accurate kopi slang based on traditional kopitiam rules
+- Provide visual feedback with coffee/tea images
+- Track order history for learning and favorites
+- Make kopitiam culture accessible to both locals and tourists
 
 ## 🏗️ Architecture Guidelines
 
@@ -69,10 +70,7 @@ open http://localhost:3000
 ### Environment Variables
 Create `.env.local` for local development:
 ```env
-# Translation API keys (if using external services)
-NEXT_PUBLIC_TRANSLATION_API_KEY=your_api_key_here
-
-# Analytics (optional)
+# Future API integrations (if needed)
 NEXT_PUBLIC_ANALYTICS_ID=your_analytics_id
 
 # Development settings
@@ -82,77 +80,115 @@ NODE_ENV=development
 ## 🎨 UI/UX Guidelines
 
 ### Design Principles
-1. **Mobile-First**: Design for mobile, enhance for desktop
-2. **Accessibility**: Follow WCAG 2.1 AA standards
-3. **Cultural Sensitivity**: Use appropriate colors and imagery for Singapore context
-4. **Performance**: Optimize for fast loading on mobile networks
+1. **Mobile-First**: Design for coffee shop environments and on-the-go ordering
+2. **Accessibility**: Follow WCAG 2.1 AA standards for diverse user base
+3. **Cultural Authenticity**: Use Singapore coffee culture imagery and terminology
+4. **Educational Focus**: Make learning kopi slang intuitive and engaging
+5. **Quick Interactions**: Optimize for fast ordering in busy kopitiam environments
 
 ### Component Standards
 - Use shadcn/ui components as base
-- Follow consistent naming conventions
-- Implement proper TypeScript types
+- Follow consistent naming conventions for coffee terminology
+- Implement proper TypeScript types for orders and drinks
 - Add proper ARIA labels for accessibility
+- Ensure touch-friendly sizing for mobile coffee shop usage
 
 ### Color Scheme
 ```css
-/* Singapore-inspired color palette */
---singapore-red: #DA0010;      /* Singapore flag red */
---singapore-white: #FFFFFF;    /* Singapore flag white */
+/* Kopitiam-inspired color palette */
+--kopi-brown: #8B4513;         /* Coffee brown */
+--teh-amber: #FF6B35;          /* Tea amber */
 --hawker-orange: #FF6B35;      /* Hawker center warmth */
---mrt-blue: #0066CC;           /* MRT system blue */
---nature-green: #228B22;       /* Garden city green */
+--kopitiam-cream: #F5F5DC;     /* Cream/milk color */
+--singapore-green: #228B22;    /* Garden city green */
 ```
 
-## 🔤 Translation Implementation
+## ☕ Kopi Slang Generation System
 
-### Core Translation Logic
+### Core Order Processing Logic
 
-#### 1. Input Processing
+#### 1. Order Input Structure
 ```typescript
-interface TranslationInput {
-  text: string;
-  sourceLang: string;
-  targetLang: string;
-  context?: 'formal' | 'casual' | 'singlish';
+interface OrderInput {
+  customerName: string;
+  drinkType: 'coffee' | 'tea' | 'milo';
+  milkType: 'condensed' | 'evaporated' | 'none';
+  sweetness: 'normal' | 'less' | 'extra' | 'none';
+  temperature: 'hot' | 'iced';
+}
+
+interface Order {
+  id: string;
+  name: string;
+  drink: string;
+  kopiSlang: string;
+  timestamp: Date;
 }
 ```
 
-#### 2. Singapore Context Detection
+#### 2. Kopi Slang Generation Rules
 ```typescript
-// Detect Singapore-specific terms
-const SG_TERMS = {
-  transport: ['MRT', 'LRT', 'ERP', 'COE', 'bus interchange'],
-  housing: ['HDB', 'BTO', 'condo', 'landed', 'void deck'],
-  food: ['kopitiam', 'hawker center', 'teh', 'kopi', 'laksa'],
-  places: ['Orchard', 'Sentosa', 'Marina Bay', 'Changi'],
-  singlish: ['lah', 'lor', 'meh', 'sia', 'wah', 'aiyah']
+// Base drink mapping
+const DRINK_BASE = {
+  coffee: 'Kopi',
+  tea: 'Teh', 
+  milo: 'Milo'
+};
+
+// Milk modifier rules
+const MILK_MODIFIERS = {
+  condensed: '',        // Default, no suffix
+  evaporated: '-C',     // Carnation milk
+  none: '-O'           // "O" meaning black
+};
+
+// Sugar modifier rules  
+const SUGAR_MODIFIERS = {
+  normal: '',           // Default sweetness
+  less: ' Siu Dai',     // Less sweet
+  extra: ' Gah Dai',    // Extra sweet  
+  none: ' Kosong'       // No sugar
+};
+
+// Temperature modifier
+const TEMP_MODIFIERS = {
+  hot: '',              // Default
+  iced: ' Peng'         // Iced
 };
 ```
 
-#### 3. Translation Preservation Rules
+#### 3. Slang Generation Function
 ```typescript
-// Terms that should NOT be translated
-const PRESERVE_TERMS = [
-  'HDB', 'MRT', 'LRT', 'ERP', 'COE',
-  'kopitiam', 'hawker center',
-  'Singlish', 'lah', 'lor', 'meh'
-];
-
-// Context-aware translation
-function translateWithContext(input: TranslationInput): string {
-  // 1. Identify Singapore terms
-  // 2. Apply context-appropriate translation
-  // 3. Preserve cultural terms
-  // 4. Return localized result
+function generateKopiSlang(input: OrderInput): string {
+  const base = DRINK_BASE[input.drinkType];
+  const milk = MILK_MODIFIERS[input.milkType];
+  const sugar = SUGAR_MODIFIERS[input.sweetness];
+  const temp = TEMP_MODIFIERS[input.temperature];
+  
+  return `${base}${milk}${sugar}${temp}`.trim();
 }
 ```
 
-### Language Support Priority
+### Visual Representation System
 
-1. **English ↔ Chinese (Simplified)** - Primary focus
-2. **English ↔ Chinese (Traditional)** - Secondary
-3. **English ↔ Malay** - Community driven
-4. **English ↔ Tamil** - Community driven
+#### Coffee/Tea Image Mapping
+```typescript
+interface DrinkVisual {
+  imageSrc: string;
+  label: string;
+  alt: string;
+}
+
+const VISUAL_MAPPING = {
+  'kopi': '/images/kopi.png',           // Coffee with condensed milk
+  'kopi-o': '/images/kopi-o.png',       // Black coffee
+  'kopi-c': '/images/kopi-c.png',       // Coffee with evaporated milk
+  'kopi-peng': '/images/kopi-peng.png', // Iced coffee
+  'teh': '/images/teh.png',             // Tea with condensed milk
+  'teh-peng': '/images/teh-peng.png',   // Iced tea
+  'milo': '/images/milo.png'            // Milo chocolate drink
+};
+```
 
 ## 🧪 Testing Guidelines
 
@@ -161,7 +197,7 @@ function translateWithContext(input: TranslationInput): string {
 __tests__/
 ├── components/           # Component tests
 ├── lib/                 # Utility function tests
-├── translation/         # Translation logic tests
+├── kopi-slang/          # Kopi slang generation tests
 └── e2e/                # End-to-end tests
 ```
 
@@ -173,31 +209,37 @@ pnpm test
 # E2E tests
 pnpm test:e2e
 
-# Translation accuracy tests
-pnpm test:translation
+# Kopi slang accuracy tests
+pnpm test:kopi-slang
 
 # Build test
 pnpm build
 ```
 
-### Translation Testing Checklist
-- [ ] Singapore terms are preserved correctly
-- [ ] Singlish expressions maintain meaning
-- [ ] Cultural context is maintained
-- [ ] Edge cases are handled
-- [ ] Native speaker validation (when possible)
+### Kopi Slang Testing Checklist
+- [ ] All drink combinations generate correct slang
+- [ ] Edge cases handled (e.g., Milo with milk modifiers)
+- [ ] Slang matches authentic kopitiam terminology
+- [ ] Visual representations match generated slang
+- [ ] Order history persists correctly
+- [ ] Cultural authenticity validated by Singapore coffee culture experts
 
 ## 📱 Mobile Optimization
 
 ### Performance Targets
-- **First Contentful Paint**: < 1.5s
-- **Largest Contentful Paint**: < 2.5s
-- **Cumulative Layout Shift**: < 0.1
-- **First Input Delay**: < 100ms
+- **Order Form Response**: < 100ms per dropdown selection
+- **Slang Generation**: < 50ms instant feedback
+- **Image Loading**: < 500ms for coffee visuals
+- **Order History Load**: < 200ms
+- **Local Storage Operations**: < 100ms
 
-### Mobile-Specific Features
-- Touch-friendly interface
-- Offline capability (future)
+### Coffee Shop Environment Features
+- Touch-friendly dropdown interfaces
+- High contrast for bright coffee shop lighting
+- Quick order building workflow
+- Offline order history access
+- Copy-to-clipboard for sharing orders
+- Educational tooltips that don't interrupt ordering flow
 - Voice input (future)
 - Share functionality
 - Copy-to-clipboard
@@ -205,16 +247,16 @@ pnpm build
 ## 🔒 Security Considerations
 
 ### Data Handling
-- Never log user translation input
-- Sanitize all user inputs
-- Use HTTPS for all API calls
-- Implement rate limiting
+- Store order history locally in browser storage only
+- Sanitize customer name inputs
+- No external API calls required for core functionality
+- Implement basic input validation for dropdown selections
 
 ### Privacy
-- No storage of user translations
-- Clear privacy policy
-- Transparent data usage
-- GDPR compliance (if applicable)
+- No server-side storage of user orders
+- Order history remains on user's device
+- Clear privacy policy about local data usage
+- Export functionality for user data portability
 
 ## 🚀 Deployment Process
 
@@ -224,13 +266,13 @@ pnpm build
 # Development
 git checkout develop
 git pull origin develop
-# Make changes
+# Make changes to kopi slang rules or UI
 git add .
-git commit -m "feat: add feature description"
+git commit -m "feat: add new coffee variation support"
 git push origin develop
 
 # Create PR to main
-# After review and approval
+# After review and kopitiam culture validation
 git checkout main
 git pull origin main
 # Automatic deployment via Vercel
@@ -239,66 +281,72 @@ git pull origin main
 ### Pre-deployment Checklist
 - [ ] All tests pass
 - [ ] Build succeeds
-- [ ] Translation accuracy verified
-- [ ] Mobile responsiveness checked
-- [ ] Performance metrics within targets
-- [ ] Security scan passed
+- [ ] Kopi slang generation accuracy verified
+- [ ] Mobile responsiveness in coffee shop lighting tested
+- [ ] Order history functionality working
+- [ ] Coffee images loading correctly
+- [ ] Cultural authenticity reviewed by Singapore locals
 
 ## 📊 Analytics & Monitoring
 
 ### Key Metrics to Track
-- Translation accuracy feedback
-- User engagement (time on site, translations per session)
-- Language pair usage
-- Error rates
-- Performance metrics
+- Most popular kopi combinations ordered
+- User engagement (orders per session, return visits)
+- Educational content interaction (hover cards, visual previews)
+- Order history usage patterns
+- Coffee shop environment performance metrics
 
 ### Tools
 - Vercel Analytics (performance)
-- Custom translation feedback system
-- Error monitoring (Sentry or similar)
+- Custom order analytics (popular combinations)
+- Error monitoring for slang generation
+- User feedback system for cultural accuracy
 
 ## 🤝 Community Guidelines
 
 ### Code Review Process
 1. All PRs require review
-2. Translation changes need native speaker validation
-3. UI changes need accessibility review
-4. Performance impact assessment required
+2. Kopi slang changes need Singapore local validation
+3. UI changes need coffee shop environment testing
+4. Cultural authenticity assessment required
+5. Order flow usability review
 
 ### Contributing Areas
-- Translation accuracy improvements
-- Singapore context detection
-- UI/UX enhancements
-- Performance optimizations
+- Kopi slang accuracy improvements
+- New coffee/tea variations
+- Visual coffee representation enhancements
+- Coffee shop usability optimizations
+- Educational content improvements
 - Documentation updates
 
 ## 🔄 Maintenance Schedule
 
 ### Weekly
 - Dependency updates check
-- Performance monitoring review
-- Community feedback review
+- Order analytics review
+- Community feedback on kopi accuracy review
+- Coffee shop environment performance monitoring
 
 ### Monthly
 - Security audit
-- Translation accuracy assessment
+- Kopi slang cultural accuracy assessment
 - Feature roadmap review
 - Community contribution recognition
+- Coffee shop user research
 
 ### Quarterly
 - Major dependency updates
 - Architecture review
-- User research sessions
-- Roadmap planning
+- Singapore coffee culture research update
+- Roadmap planning with community input
 
 ## 📚 Resources
 
-### Singapore Context References
-- [Singlish Dictionary](https://www.singlishdictionary.com/)
-- [Singapore Government Terms](https://www.gov.sg/)
-- [MRT System Map](https://www.smrt.com.sg/)
-- [HDB Housing Types](https://www.hdb.gov.sg/)
+### Singapore Coffee Culture References
+- [Singapore Kopi Culture Guide](https://www.visitsingapore.com/dining-drinks-singapore/local-dishes/kopi/)
+- [Traditional Kopitiam Terminology](https://www.straitstimes.com/lifestyle/food/kopi-talk)
+- [Singapore Coffee Shop History](https://www.roots.sg/learn/stories/kopitiam-culture)
+- [Authentic Kopi Ordering Guide](https://thehoneycombers.com/singapore/kopi-guide-singapore/)
 
 ### Technical Documentation
 - [Next.js 14 Docs](https://nextjs.org/docs)
@@ -308,4 +356,4 @@ git pull origin main
 
 ---
 
-*Remember: We're building for Singapore's unique multicultural and multilingual community. Every translation should respect and preserve the rich cultural context that makes Singapore special.* 🇸🇬
+*Remember: We're building an educational tool for Singapore's rich kopitiam culture. Every kopi slang generation should be authentic, respectful, and help users learn genuine coffee ordering traditions.* 🇸🇬☕
