@@ -1,30 +1,71 @@
-# Simple Kopi Translate App
+# Kopi Translate SG Style
 
-*Automatically synced with your [v0.dev](https://v0.dev) deployments*
+*A Singapore-style translation app that understands local context, Singlish, and cultural nuances.*
 
-[![Deployed on Vercel](https://img.shields.io/badge/Deployed%20on-Vercel-black?style=for-the-badge&logo=vercel)](https://vercel.com/yongjintans-projects/v0-simple-kopi-translate-app)
-[![Built with v0](https://img.shields.io/badge/Built%20with-v0.dev-black?style=for-the-badge)](https://v0.dev/chat/projects/8i40u7PmA0O)
+[![Deployed on Vercel](https://img.shields.io/badge/Deployed%20on-Vercel-black?style=for-the-badge&logo=vercel)](https://vercel.com/yongjintans-projects/kopi-translate-sg-style)
 
-## Overview
+## 🇸🇬 About
 
-This repository will stay in sync with your deployed chats on [v0.dev](https://v0.dev).
-Any changes you make to your deployed app will be automatically pushed to this repository from [v0.dev](https://v0.dev).
+Kopi Translate SG Style is designed specifically for Singaporeans, by Singaporeans. Unlike generic translation tools, we understand:
 
-## Deployment
+- **Singlish expressions** and when to preserve them
+- **Local terminology** (HDB, MRT, kopitiam, hawker center)
+- **Cultural context** that generic translators miss
+- **Food culture** and dining terminology
+- **Multicultural nuances** of Singapore society
 
-Your project is live at:
+## ✨ Features
 
-**[https://vercel.com/yongjintans-projects/v0-simple-kopi-translate-app](https://vercel.com/yongjintans-projects/v0-simple-kopi-translate-app)**
+- 🔄 **Multi-language support**: English, Chinese (Simplified/Traditional), Malay, Tamil
+- 🏠 **Local context awareness**: Preserves Singapore-specific terms
+- 🍜 **Food & dining expertise**: Accurate hawker center and local cuisine translations
+- 🚇 **Transport terminology**: MRT, bus, taxi terminology handled correctly
+- 🏢 **Housing context**: HDB, condo, landed property terms
+- 💬 **Singlish handling**: Smart preservation of Singlish expressions
+- 📱 **Mobile-first design**: Perfect for on-the-go translation needs
 
-## Build your app
+## 🚀 Getting Started
 
-Continue building your app on:
+### Prerequisites
 
-**[https://v0.dev/chat/projects/8i40u7PmA0O](https://v0.dev/chat/projects/8i40u7PmA0O)**
+- Node.js 18+ 
+- pnpm (recommended) or npm
+- Git
 
-## How It Works
+### Installation
 
-1. Create and modify your project using [v0.dev](https://v0.dev)
-2. Deploy your chats from the v0 interface
-3. Changes are automatically pushed to this repository
-4. Vercel deploys the latest version from this repository
+```bash
+# Clone the repository
+git clone https://github.com/yourusername/kopi-translate-sg-style.git
+
+# Navigate to the project directory
+cd kopi-translate-sg-style
+
+# Install dependencies
+pnpm install
+
+# Start the development server
+pnpm dev
+
+# Open http://localhost:3000
+```
+
+## 🛠️ Tech Stack
+
+- **Frontend**: Next.js 15, React 19, TypeScript
+- **Styling**: Tailwind CSS, shadcn/ui
+- **State Management**: React hooks
+- **Package Manager**: pnpm
+- **Deployment**: Vercel
+
+## 🤝 Contributing
+
+We welcome contributions from the Singapore community! Please read our [Contributing Guidelines](.github/CONTRIBUTING.md) to get started.
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+---
+
+Made with ❤️ for Singapore 🇸🇬
