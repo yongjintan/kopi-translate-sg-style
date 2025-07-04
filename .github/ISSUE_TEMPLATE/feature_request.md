@@ -13,10 +13,11 @@ A clear and concise description of what the problem is. Ex. I'm always frustrate
 **Describe the solution you'd like**
 A clear and concise description of what you want to happen.
 
-**Translation Enhancement**
-- What language pair would this feature support?
-- How would this improve Singapore-style translations?
-- Any specific Singlish or local context considerations?
+**Kopi Culture Enhancement**
+- What new drink variation or feature would this add?
+- How would this improve learning Singapore kopi culture?
+- Any specific kopitiam context considerations?
+- Would this help tourists or locals better understand coffee ordering?
 
 **Describe alternatives you've considered**
 A clear and concise description of any alternative solutions or features you've considered.

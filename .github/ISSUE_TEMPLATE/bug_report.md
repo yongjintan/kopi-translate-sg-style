@@ -12,21 +12,24 @@ A clear and concise description of what the bug is.
 
 **To Reproduce**
 Steps to reproduce the behavior:
-1. Go to '...'
-2. Click on '....'
-3. Scroll down to '....'
-4. See error
+1. Enter customer name: '...'
+2. Select drink type: '...'
+3. Select milk type: '...'
+4. Select sweetness level: '...'
+5. Select temperature: '...'
+6. See error/incorrect kopi slang
 
 **Expected behavior**
-A clear and concise description of what you expected to happen.
+A clear and concise description of what kopi slang you expected to be generated.
 
 **Screenshots**
 If applicable, add screenshots to help explain your problem.
 
-**Translation Context**
-- What text were you trying to translate?
-- From which language to which language?
-- What Singapore-style translation did you expect?
+**Kopi Order Context**
+- What drink combination were you trying to order?
+- What dropdown selections did you make (drink, milk, sweetness, temperature)?
+- What kopi slang did you expect vs. what was generated?
+- Is this combination authentic to Singapore kopitiam culture?
 
 **Desktop (please complete the following information):**
 - OS: [e.g. iOS]

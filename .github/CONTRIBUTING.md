@@ -1,13 +1,13 @@
 # Contributing to Kopi Translate SG Style
 
-Thank you for your interest in contributing to Kopi Translate SG Style! 🇸🇬
+Thank you for your interest in contributing to Kopi Translate SG Style! 🇸🇬☕
 
 ## Table of Contents
 
 - [Code of Conduct](#code-of-conduct)
 - [Getting Started](#getting-started)
 - [How to Contribute](#how-to-contribute)
-- [Translation Guidelines](#translation-guidelines)
+- [Kopi Culture Guidelines](#kopi-culture-guidelines)
 - [Development Setup](#development-setup)
 - [Submitting Changes](#submitting-changes)
 
@@ -29,9 +29,9 @@ This project follows a code of conduct to ensure a welcoming environment for all
 Before creating bug reports, please check existing issues. When creating a bug report, include:
 
 - A clear and descriptive title
-- Steps to reproduce the problem
-- Expected behavior
-- Actual behavior
+- Steps to reproduce the problem with specific dropdown selections
+- Expected kopi slang output
+- Actual kopi slang output
 - Screenshots if applicable
 - Your environment (browser, OS, etc.)
 
@@ -40,51 +40,55 @@ Before creating bug reports, please check existing issues. When creating a bug r
 We welcome feature suggestions! Please use the feature request template and include:
 
 - A clear description of the feature
-- Why it would be useful
-- How it relates to Singapore context
+- Why it would be useful for learning kopi culture
+- How it relates to Singapore kopitiam context
 - Any implementation ideas
 
-### Translation Improvements
+### Kopi Culture Improvements
 
-We especially welcome contributions that improve translation accuracy for Singapore context:
+We especially welcome contributions that improve kopi slang accuracy and cultural authenticity:
 
-- **Singlish support**: Help us better handle Singlish phrases and expressions
-- **Local terminology**: Improve translations for Singapore-specific terms
-- **Cultural context**: Enhance cultural sensitivity in translations
-- **Food terminology**: Better handling of local food names and descriptions
+- **Kopi terminology accuracy**: Help us ensure authentic kopitiam slang generation
+- **New coffee/tea variations**: Add support for additional drink types
+- **Visual representations**: Improve coffee/tea images and descriptions
+- **Educational content**: Enhance learning materials about kopitiam culture
+- **Order flow improvements**: Better user experience for coffee shop environments
 
-## Translation Guidelines
+## Kopi Culture Guidelines
 
-### Singapore-Specific Considerations
+### Singapore Kopitiam Considerations
 
-When contributing translation improvements:
+When contributing kopi slang improvements:
 
-1. **Preserve local context**: Don't over-translate Singapore-specific terms
-   - "HDB" should remain "HDB" in most cases
-   - "Kopitiam" should remain "kopitiam"
-   - "MRT" should remain "MRT"
+1. **Maintain authenticity**: Ensure all generated slang matches real kopitiam usage
+   - "Kopi-O" means black coffee (no milk)
+   - "Kopi-C" means coffee with evaporated milk
+   - "Kosong" means no sugar
+   - "Siu Dai" means less sweet
+   - "Gah Dai" means extra sweet
+   - "Peng" means iced
 
-2. **Handle Singlish appropriately**: 
-   - Understand when to preserve Singlish expressions
-   - Know when to provide standard translations
-   - Maintain the spirit of the original expression
+2. **Respect traditional ordering**:
+   - Understand the proper order of modifiers
+   - Know which combinations are authentic
+   - Maintain cultural respect for kopitiam traditions
 
 3. **Cultural sensitivity**:
-   - Be aware of cultural nuances
-   - Respect religious and cultural references
-   - Understand local humor and expressions
+   - Be aware of kopitiam etiquette
+   - Respect coffee shop worker terminology
+   - Understand local coffee culture context
 
-4. **Food and dining**:
-   - Preserve authentic food names when appropriate
-   - Provide context when helpful
-   - Understand hawker center terminology
+4. **Educational value**:
+   - Help users learn proper kopi ordering
+   - Provide clear explanations for slang terms
+   - Make kopitiam culture accessible to tourists and newcomers
 
-### Language Pairs Priority
+### Drink Variations Priority
 
-1. **English ↔ Chinese (Simplified)**
-2. **English ↔ Chinese (Traditional)**
-3. **English ↔ Malay**
-4. **English ↔ Tamil**
+1. **Core drinks**: Kopi, Teh, Milo
+2. **Milk variations**: Default (condensed), -C (evaporated), -O (no milk)
+3. **Sugar levels**: Normal, Kosong, Siu Dai, Gah Dai
+4. **Temperature**: Hot (default), Peng (iced)
 
 ## Development Setup
 
@@ -140,11 +144,11 @@ pnpm dev
 
 Example:
 ```
-Add Singlish phrase detection feature
+Add support for Teh-C Peng combination
 
-- Implement pattern matching for common Singlish expressions
-- Add translation context preservation
-- Update test cases for new functionality
+- Implement slang generation for iced tea with evaporated milk
+- Add visual representation for this drink variant
+- Update educational tooltips with proper explanation
 
 Fixes #123
 ```
@@ -155,25 +159,27 @@ Fixes #123
 - Use TypeScript for type safety
 - Use Prettier for code formatting
 - Use ESLint for code linting
-- Write meaningful variable and function names
+- Write meaningful variable and function names related to coffee terminology
 
 ## Testing
 
 Before submitting:
 
 - [ ] Run `pnpm build` to ensure the project builds
-- [ ] Test translation functionality manually
-- [ ] Verify UI/UX changes work across different screen sizes
-- [ ] Check that your changes don't break existing functionality
+- [ ] Test kopi slang generation manually with various combinations
+- [ ] Verify UI/UX changes work in coffee shop lighting conditions
+- [ ] Check that order history functionality works correctly
+- [ ] Ensure visual coffee representations load properly
 
-## Translation Testing
+## Kopi Slang Testing
 
-For translation-related contributions:
+For kopi slang-related contributions:
 
-- Test with native speakers when possible
-- Verify Singapore context is preserved
-- Ensure cultural appropriateness
-- Test edge cases and special characters
+- Test with Singapore locals when possible
+- Verify all drink combinations produce authentic slang
+- Ensure cultural appropriateness and accuracy
+- Test edge cases (e.g., unusual modifier combinations)
+- Validate against real kopitiam ordering patterns
 
 ## Questions?
 
@@ -189,4 +195,4 @@ Contributors will be recognized in our README and release notes. We appreciate a
 
 ---
 
-Thank you for helping make Kopi Translate SG Style better for the Singapore community! 🚀
+Thank you for helping make Kopi Translate SG Style better for learning Singapore coffee culture! 🚀☕
