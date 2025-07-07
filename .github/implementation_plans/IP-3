@@ -1,0 +1,71 @@
+Implementation Plan: Story 3 – Order History, Privacy Controls & Nerd Reporting
+1. User Story
+As a data-minded coffee enthusiast
+I want to view/delete my past orders and download a JSON “nerd report”
+So that I can track my caffeine intake and keep my data private
+
+2. Pre-conditions
+Story 2 deployed and stable
+
+Feature-flag system configured (e.g. LaunchDarkly)
+
+orders table has basic records
+
+3. Technical Requirements
+UI:
+
+New /history page
+
+List view with “Delete” button per order
+
+“Download JSON Report” button
+
+API:
+
+GET /api/history?userId=
+
+DELETE /api/history/:orderId (soft delete)
+
+GET /api/history/report?userId=&format=json
+
+DB: add deleted_at TIMESTAMPTZ and caffeine_mg INT columns
+
+Feature Flag: wrap history/report rollout
+
+4. Database Schema (Optional Artefact)
+sql
+Copy
+Edit
+ALTER TABLE orders
+  ADD COLUMN deleted_at TIMESTAMPTZ NULL,
+  ADD COLUMN caffeine_mg INT NOT NULL DEFAULT 0;
+5. Implementation Tasks
+Task	Owner	Status
+1. Create DB migration for deleted_at & caffeine_mg	Carlos	✅ Done
+2. Build /history page & list component	Dana	🟧 In Progress
+3. Implement GET /api/history endpoint filtering out deleted_at IS NOT NULL	Bob	⬜ Not Started
+4. Implement DELETE /api/history/:orderId soft-delete	Bob	⬜ Not Started
+5. Implement GET /api/history/report streaming JSON download	Carlos	⬜ Not Started
+6. Compute and save caffeine_mg at order creation	Carlos	⬜ Not Started
+7. Add feature-flag checks around history UI & endpoints	Bob	⬜ Not Started
+8. Update CI/CD to include migration & E2E tests	Carlos	⬜ Not Started
+
+6. Acceptance Criteria
+History page lists only non-deleted orders, paginated
+
+Clicking “Delete” marks deleted_at and removes it from the list
+
+“Download JSON Report” returns a valid JSON array of all orders with caffeine data
+
+Feature flag OFF → history routes return 404
+
+7. Modified Files
+pages/history.tsx
+
+components/OrderList.tsx
+
+api/history/index.ts, api/history/[orderId].ts, api/history/report.ts
+
+migrations/####_add_deleted_at_and_caffeine.sql
+
+Feature-flag config file

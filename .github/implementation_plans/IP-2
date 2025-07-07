@@ -1,0 +1,84 @@
+Implementation Plan: Story 2 – Coffee Ordering via Partner API
+1. User Story
+As a busy Singaporean
+I want to place my translated coffee order directly to a partner café
+So that I can skip the queue and have it ready when I arrive
+
+2. Pre-conditions
+Story 1 deployed and stable
+
+Partner café API credentials (client ID/secret) provisioned
+
+PostgreSQL database provisioned and users table exists
+
+Dockerfile and ECS cluster ready
+
+3. Technical Requirements
+UI: React modal for order customization (size, sweetness, ice)
+
+API:
+
+POST /api/order
+
+OAuth2 client-credentials flow
+
+DB: new orders table (UUID PK, JSONB payload, status, timestamps)
+
+Infra: ECS service, Redis for retry queue
+
+4. Database Schema (Optional Artefact)
+sql
+Copy
+Edit
+CREATE TABLE orders (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID NOT NULL REFERENCES users(id),
+  payload JSONB NOT NULL,
+  status VARCHAR(20) NOT NULL DEFAULT 'pending',
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+5. API Contract (Optional Artefact)
+yaml
+Copy
+Edit
+POST /api/order
+Request:
+  {
+    "userId": "uuid",
+    "coffeeType": "kopi-o-kosong",
+    "size": "medium",
+    "sugarLevel": "less",
+    "ice": "yes"
+  }
+Response (200):
+  { "orderId": "uuid", "status": "confirmed", "eta": "5 mins" }
+6. Implementation Tasks
+Task	Owner	Status
+1. Add orders table migration	Carlos	✅ Done
+2. Build React “Order” modal & form	Dana	🟧 In Progress
+3. Implement /api/order endpoint with OAuth2 and partner-API call	Carlos	⬜ Not Started
+4. Hook up JWT auth on frontend & backend	Bob	⬜ Not Started
+5. Containerize order service (Dockerfile)	Carlos	⬜ Not Started
+6. Deploy service to ECS + configure Redis for retries	Carlos	⬜ Not Started
+7. Update CI/CD pipeline for Docker build & push	Carlos	⬜ Not Started
+
+7. Acceptance Criteria
+“Order” modal validates all fields before submit
+
+POST /api/order returns 200 with valid orderId under normal conditions
+
+New record appears in orders table with correct payload & status
+
+If partner API fails, service retries 3× then returns 503
+
+8. Modified Files
+components/OrderModal.tsx
+
+pages/translate.tsx (trigger modal)
+
+api/order/index.ts
+
+migrations/####_create_orders.sql
+
+Dockerfile, ecs-service.json, CI manifests

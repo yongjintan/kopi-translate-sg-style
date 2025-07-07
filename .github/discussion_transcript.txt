@@ -1,0 +1,149 @@
+Transcript of Team Discussion on “Kopi Konverter”
+
+Participants:
+
+Alice (Project Manager)
+
+Bob (Senior Developer 1)
+
+Carlos (Senior Developer 2)
+
+Dana (UI Designer)
+
+Eve (Test Engineer 1)
+
+Frank (Test Engineer 2)
+
+Alice (PM):
+“Good morning, everyone. Today we’re kicking off Kopi Konverter — our Singapore-style translation and coffee-ordering app. Let’s align on high-level design, features, beneficiaries, and scope. I'll start with context: we want to help newcomers and locals who struggle with Singapore’s coffee lingo. Thoughts?”
+
+Bob (Sr. Dev 1):
+“Technically, we’ll need a front end that’s mobile-first, and a backend translation engine. I’m thinking Next.js for the UI, Node.js server exposing REST or GraphQL. We’ll integrate a lightweight NLP model—maybe hosted via AWS Lambda—and also hook into local coffee shop APIs for ordering.”
+
+Carlos (Sr. Dev 2):
+“Agreed. On the high-level architecture:
+
+Client: Next.js + React, TypeScript, Tailwind.
+
+API Gateway: AWS API Gateway or Express.
+
+Translation Service: a microservice using a fine-tuned language model that understands Singlish and coffee terms.
+
+Order Service: calls partner coffee-shop REST endpoints.
+
+Database: DynamoDB or PostgreSQL for storing user preferences, order history, caffeine tracking.
+
+Analytics: optional for future nerd reporting in JSON.”
+
+Dana (UI Designer):
+“On the UI side, I’ll draft mobile-first screens:
+
+Home screen: text input for translation, plus quick-order shortcuts (“kopi o kosong”).
+
+Results: show translated English, local term, and an “Order” button.
+
+History: timeline view with filter by date, and a ‘delete’ icon for privacy.
+
+Caffeine dashboard: simple stats of daily/weekly caffeine consumption.
+I’ll maintain consistent iconography, plus Segoe UI-like fonts for legibility.”
+
+Alice:
+“Great. Let’s map that to features and benefits.”
+
+1. High-Level Design
+Frontend: Next.js 15, React 19, TypeScript, Tailwind CSS, shadcn/ui.
+
+Backend: Node.js 18+, Express or AWS Lambda functions.
+
+Translation Engine: microservice wrapping a fine-tuned NLP model.
+
+Order Engine: service layer calling partner café APIs.
+
+Database: PostgreSQL for relational data (user), and possibly DynamoDB for caching translations.
+
+Authentication: JWT with OAuth2 for partner integration.
+
+CI/CD: GitHub Actions or Azure Pipelines; deploy containers to AWS ECS or Vercel for frontend.
+
+2. Features
+Core:
+
+Singlish-aware translation
+
+Multilingual support: English, 中文, Melayu, தமிழ்
+
+Order coffee: real-time REST ordering with local partner APIs
+
+Caffeine tracking: daily/weekly totals
+
+Order history: view and delete entries
+
+Nerd Reporting: download JSON report
+
+Delighters:
+
+Smart preservation of Singlish expressions
+
+Local context tips (“kopi peng is coffee with ice”)
+
+Dark mode for night owls
+
+3. Beneficiaries & Market Fit
+Tourists & Expats: instant understanding of local coffee nomenclature.
+
+New Residents: accelerates social assimilation (“How to order kopi like a local”).
+
+Coffee Enthusiasts: tracks consumption and experiments with variations.
+
+Cafés & F&B Partners: white-label ordering through our platform increases sales.
+
+Market fit: Niche gap in region-specific translation plus direct ordering. Low competition since generic translators miss coffee jargon and Singlish nuances.
+
+4. Scope & MVP
+MVP Features:
+
+Text translation with Singlish/culture context
+
+Single-button order for one partnered chain
+
+Order history list (no delete yet)
+
+Basic caffeine counter
+
+Phase 2:
+
+Multi-shop ordering
+
+Order deletion/privacy controls
+
+JSON nerd reports
+
+Multi-language UI
+
+Phase 3+:
+
+Dark mode
+
+Push notifications for coffee time
+
+Analytics dashboard for cafés
+
+Eve (Test Engr 1):
+“For QA, we’ll write unit tests for translation logic, API mocks for partner endpoints, and E2E flows via Playwright: from translation to order confirmation. For performance, simulate 100 concurrent users to ensure the Lambda scales.”
+
+Frank (Test Engr 2):
+“I’ll draft security tests: JWT auth, injection checks. And compatibility tests on iOS Safari, Chrome Android. Also edge cases: unknown Singlish phrases, network failures during ordering.”
+
+Alice:
+“Excellent. Let’s capture action items:
+
+Bob & Carlos: prototype backend services and data models
+
+Dana: wireframes for the four main screens by next Wed
+
+Eve & Frank: test plan outline by EOD tomorrow
+
+Alice: finalize project timeline and scope document”
+
+All:
+“Sounds good!”

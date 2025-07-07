@@ -1,0 +1,67 @@
+User Story 3: Order History, Privacy Controls & Nerd Reporting
+As a data-minded coffee enthusiast
+I want to view/delete my past orders and download a JSON “nerd report”
+So that I can track my caffeine intake and keep my data private
+
+Technical Details
+UI
+
+New Next.js page /history
+
+List of orders with timestamp, coffee details, “Delete” button
+
+“Download JSON Report” button
+
+Backend
+
+GET /api/history?user_id= → returns non-deleted orders
+
+DELETE /api/history/:order_id → sets deleted_at timestamp
+
+GET /api/history/report?format=json → streams JSON
+
+DB
+
+Extend orders table with
+
+sql
+Copy
+Edit
+ALTER TABLE orders
+  ADD COLUMN deleted_at TIMESTAMP,
+  ADD COLUMN caffeine_mg INT;
+Compute caffeine_mg during order processing
+
+Infra
+
+Feature-flag rollout (e.g. LaunchDarkly)
+
+Estimation
+Story points: 20 (~3 weeks)
+
+Dev Tasks
+DB migration for deleted_at, caffeine_mg (1 day)
+
+Build history page & delete UI (2 days)
+
+Implement history & delete endpoints (2 days)
+
+JSON report streaming endpoint (1 day)
+
+Integrate caffeine calculation in order flow (1 day)
+
+Configure feature-flag and deploy (1 day)
+
+Testing Estimates
+Unit tests (history & report services): 12 h
+
+Integration tests (DB + feature flag): 8 h
+
+E2E tests (history UI + report download): 6 h
+
+Security
+Verify user authorization on all history endpoints
+
+Rate-limit report downloads
+
+Sanitize JSON output to prevent injection
