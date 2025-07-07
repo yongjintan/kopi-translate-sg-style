@@ -1,0 +1,49 @@
+User Story 1: Singlish-Aware Translation (MVP)
+As a coffee-lover unfamiliar with Singapore’s coffee lingo
+I want to type in a Singlish or English coffee order and get back a clear, culturally-aware translation
+So that I can understand and request my coffee correctly
+
+Technical Details
+Frontend
+
+Next.js page /translate with a <textarea> and “Translate” button
+
+API call to /api/translate on submit
+
+Backend
+
+Node.js/Express (or AWS Lambda) POST /api/translate
+
+Wraps a fine-tuned NLP model that preserves Singlish where appropriate
+
+In-memory LRU cache for hot phrases
+
+Data Storage: none (cache only)
+
+CI/CD: GitHub Actions → Vercel (frontend) + AWS (backend)
+
+Estimation
+Story points: 13 (~2 weeks)
+
+Dev Tasks
+Scaffold Next.js translate page & form (1 day)
+
+Build Express/Lambda endpoint (1 day)
+
+Integrate & test NLP model (4 days)
+
+Implement LRU cache (1 day)
+
+Configure CI/CD pipelines (2 days)
+
+Testing Estimates
+Unit tests (JS/TS): 8 h
+
+Integration tests (backend + model): 4 h
+
+E2E tests (Playwright): 4 h
+
+Security
+Validate & sanitize user input (max length, no executable code)
+
+Rate-limit translate endpoint (e.g. 30 req/min per IP)

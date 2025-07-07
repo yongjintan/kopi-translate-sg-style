@@ -1,0 +1,57 @@
+Implementation Plan: Story 1 – Singlish-Aware Translation (MVP)
+1. User Story
+As a coffee-lover unfamiliar with Singapore’s coffee lingo
+I want to type in a Singlish or English coffee order and get back a clear, culturally-aware translation
+So that I can understand and request my coffee correctly
+
+2. Pre-conditions
+Base Next.js project scaffolded
+
+Fine-tuned NLP model artifact available (e.g. HuggingFace endpoint or local container)
+
+Dev AWS account & Lambda/Express skeleton in place
+
+LRU cache library added to dependencies
+
+3. Technical Requirements
+Frontend:
+
+Next.js page /translate
+
+React form & API client
+
+Backend:
+
+POST /api/translate service
+
+Integration with NLP model
+
+In-memory LRU cache
+
+CI/CD: GitHub Actions → Vercel (frontend), AWS Lambda or ECS (backend)
+
+4. Implementation Tasks
+Task	Owner	Status
+1. Scaffold /translate page + form UI	Bob	✅ Done
+2. Create Express/Lambda handler for /api/translate	Carlos	🟧 In Progress
+3. Wire up NLP model client (REST/gRPC)	Carlos	⬜ Not Started
+4. Implement LRU cache around model calls	Bob	⬜ Not Started
+5. Add client-side form validation (max length, no scripts)	Bob	⬜ Not Started
+6. Configure GitHub Actions workflow	Carlos	⬜ Not Started
+7. Deploy frontend to Vercel & backend to AWS	Carlos	⬜ Not Started
+
+5. Acceptance Criteria
+Entering any coffee phrase returns a translated string within 500 ms (cache hit)
+
+90% of common coffee orders match expected output in our sample test set
+
+UI displays error for API failures or invalid input
+
+6. Modified Files
+pages/translate.tsx
+
+api/translate/index.ts (or handler.js)
+
+lib/nlpClient.ts
+
+CI config: .github/workflows/frontend.yml, backend.yml

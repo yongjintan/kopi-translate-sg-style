@@ -1,0 +1,70 @@
+User Story 2: Coffee Ordering via Partner API
+As a busy Singaporean
+I want to place my translated coffee order directly to a partner café
+So that I can skip the queue and have it ready when I arrive
+
+Technical Details
+UI
+
+“Order” button on translate result
+
+Modal for size, sugar level, add-ons
+
+Backend
+
+Node.js microservice POST /api/order
+
+Auth: JWT for user sessions
+
+Order service calls partner café REST API (OAuth2 client credentials)
+
+DB
+
+PostgreSQL table orders
+
+sql
+Copy
+Edit
+CREATE TABLE orders (
+  id UUID PRIMARY KEY,
+  user_id UUID REFERENCES users(id),
+  payload JSONB NOT NULL,
+  status VARCHAR(20) DEFAULT 'pending',
+  created_at TIMESTAMP,
+  updated_at TIMESTAMP
+);
+Infrastructure
+
+Deploy ordering service in ECS (Docker)
+
+Redis for dedupe & retry queue
+
+Estimation
+Story points: 20 (~3 weeks)
+
+Dev Tasks
+Design & migrate orders table (1 day)
+
+Build React modal & form validations (2 days)
+
+Implement POST /api/order service (2 days)
+
+Integrate OAuth2 & partner API client (3 days)
+
+Wire up JWT auth (1 day)
+
+Deploy Docker service to ECS (2 days)
+
+Testing Estimates
+Unit tests (services & components): 12 h
+
+Integration tests (mock partner API): 8 h
+
+E2E tests (full order flow): 6 h
+
+Security
+Secure JWT storage (HttpOnly cookies)
+
+Input validation on order payload
+
+Graceful error handling & partner-API timeouts
