@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import { languages, translations, Language } from "@/lib/i18n"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -147,6 +148,19 @@ export default function KopiTranslateApp() {
   const [sweetness, setSweetness] = useState("")
   const [temperature, setTemperature] = useState("")
 
+  // Language state (fix hydration issue)
+  const [lang, setLang] = useState<Language>("en")
+  useEffect(() => {
+    const storedLang = localStorage.getItem("kopi-lang") as Language
+    if (storedLang && storedLang !== lang) {
+      setLang(storedLang)
+    }
+  }, [])
+  useEffect(() => {
+    localStorage.setItem("kopi-lang", lang)
+  }, [lang])
+  const t = translations[lang]
+
   const translateToKopiSlang = (drink: string, milk: string, sweet: string, temp: string): string => {
     let slang = ""
 
@@ -252,88 +266,100 @@ export default function KopiTranslateApp() {
         <div className="text-center space-y-2">
           <div className="flex items-center justify-center gap-2">
             <Coffee className="h-8 w-8 text-amber-600" />
-            <h1 className="text-4xl font-bold text-amber-800">Kopi Translate</h1>
+            <h1 className="text-4xl font-bold text-amber-800">{t.appTitle}</h1>
+            <div className="ml-4">
+              <select
+                className="rounded border px-2 py-1 text-sm bg-white"
+                value={lang}
+                onChange={e => setLang(e.target.value as Language)}
+                aria-label="Select language"
+              >
+                {Object.entries(languages).map(([code, label]) => (
+                  <option key={code} value={code}>{label}</option>
+                ))}
+              </select>
+            </div>
           </div>
-          <p className="text-amber-700">Learn authentic Singapore kopi slang and place your orders like a local!</p>
+          <p className="text-amber-700">{t.appSubtitle}</p>
         </div>
 
+        {/* Order Form */}
         <div className="grid lg:grid-cols-2 gap-6">
-          {/* Order Form */}
           <Card className="shadow-lg">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Plus className="h-5 w-5" />
-                Place Your Order
+                {t.placeOrder}
               </CardTitle>
               <CardDescription>
-                Fill in your preferences and we'll translate it to proper Singapore kopi slang
+                {t.orderDescription}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="name">Your Name</Label>
-                <Input id="name" placeholder="Enter your name" value={name} onChange={(e) => setName(e.target.value)} />
+                <Label htmlFor="name">{t.yourName}</Label>
+                <Input id="name" placeholder={t.enterName} value={name} onChange={(e) => setName(e.target.value)} />
               </div>
 
               <div className="space-y-2">
-                <Label>Drink Type</Label>
+                <Label>{t.drinkType}</Label>
                 <Select value={drinkType} onValueChange={setDrinkType}>
                   <SelectTrigger>
-                    <SelectValue placeholder="Choose your drink" />
+                    <SelectValue placeholder={t.chooseDrink} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="coffee">Coffee</SelectItem>
-                    <SelectItem value="tea">Tea</SelectItem>
-                    <SelectItem value="milo">Milo</SelectItem>
+                    <SelectItem value="coffee">{t.coffee}</SelectItem>
+                    <SelectItem value="tea">{t.tea}</SelectItem>
+                    <SelectItem value="milo">{t.milo}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
 
               <div className="space-y-2">
-                <Label>Milk Type</Label>
+                <Label>{t.milkType}</Label>
                 <Select value={milkType} onValueChange={setMilkType}>
                   <SelectTrigger>
-                    <SelectValue placeholder="Choose milk type" />
+                    <SelectValue placeholder={t.chooseMilk} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="condensed">Condensed Milk (Default)</SelectItem>
-                    <SelectItem value="evaporated">Evaporated Milk</SelectItem>
-                    <SelectItem value="none">No Milk</SelectItem>
+                    <SelectItem value="condensed">{t.condensedMilk}</SelectItem>
+                    <SelectItem value="evaporated">{t.evaporatedMilk}</SelectItem>
+                    <SelectItem value="none">{t.noMilk}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
 
               <div className="space-y-2">
-                <Label>Sweetness Level</Label>
+                <Label>{t.sweetnessLevel}</Label>
                 <Select value={sweetness} onValueChange={setSweetness}>
                   <SelectTrigger>
-                    <SelectValue placeholder="Choose sweetness" />
+                    <SelectValue placeholder={t.chooseSweetness} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="normal">Normal Sweet</SelectItem>
-                    <SelectItem value="less">Less Sweet (Siu Dai)</SelectItem>
-                    <SelectItem value="extra">Extra Sweet (Gah Dai)</SelectItem>
-                    <SelectItem value="none">No Sugar (Kosong)</SelectItem>
+                    <SelectItem value="normal">{t.normalSweet}</SelectItem>
+                    <SelectItem value="less">{t.lessSweet}</SelectItem>
+                    <SelectItem value="extra">{t.extraSweet}</SelectItem>
+                    <SelectItem value="none">{t.noSugar}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
 
               <div className="space-y-2">
-                <Label>Temperature</Label>
+                <Label>{t.temperature}</Label>
                 <Select value={temperature} onValueChange={setTemperature}>
                   <SelectTrigger>
-                    <SelectValue placeholder="Choose temperature" />
+                    <SelectValue placeholder={t.chooseTemperature} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="hot">Hot</SelectItem>
-                    <SelectItem value="iced">Iced (Peng)</SelectItem>
+                    <SelectItem value="hot">{t.hot}</SelectItem>
+                    <SelectItem value="iced">{t.iced}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
 
               {drinkType && milkType && sweetness && temperature && (
                 <div className="space-y-2">
-                  <Label>Preview</Label>
+                  <Label>{t.preview}</Label>
                   <div className="p-4 border rounded-lg bg-muted/50">
                     <div className="flex items-center gap-3">
                       <KopiVisual
@@ -344,7 +370,7 @@ export default function KopiTranslateApp() {
                         <p className="font-medium">
                           {translateToKopiSlang(drinkType, milkType, sweetness, temperature)}
                         </p>
-                        <p className="text-sm text-muted-foreground">Your order preview</p>
+                        <p className="text-sm text-muted-foreground">{t.orderPreview}</p>
                       </div>
                     </div>
                   </div>
@@ -353,7 +379,7 @@ export default function KopiTranslateApp() {
 
               <Button onClick={addOrder} className="w-full bg-amber-600 hover:bg-amber-700">
                 <Plus className="h-4 w-4 mr-2" />
-                Add Order
+                {t.addOrder}
               </Button>
             </CardContent>
           </Card>
@@ -361,8 +387,8 @@ export default function KopiTranslateApp() {
           {/* Kopi Slang Guide */}
           <Card className="shadow-lg">
             <CardHeader>
-              <CardTitle>Kopi Slang Guide</CardTitle>
-              <CardDescription>Common Singapore coffee shop terminology</CardDescription>
+              <CardTitle>{t.kopiGuide}</CardTitle>
+              <CardDescription>{t.kopiGuideDesc}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-3">
               <div className="grid gap-3 text-sm">
